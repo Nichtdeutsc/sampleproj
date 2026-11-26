@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Карточки</title>
+  <meta name="theme-color" content="#f4f1ea">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Полоса фразы: сюда попадают карточки, на которые нажал ребёнок -->
+  <header class="strip-bar">
+    <div id="strip" class="strip" aria-label="Фраза"></div>
+    <button id="btn-say" class="strip-btn say" aria-label="Сказать фразу">▶</button>
+    <button id="btn-clear" class="strip-btn clear" aria-label="Очистить фразу">✕</button>
+  </header>
+
+  <!-- Сетка карточек -->
+  <main id="board" class="board"></main>
+
+  <!-- Нижняя панель. Кнопку настроек нужно удерживать 2 секунды,
+       чтобы ребёнок не открыл родительский режим случайно -->
+  <footer class="bottom-bar">
+    <span id="mode-label" class="mode-label"></span>
+    <button id="btn-done" class="text-btn" hidden>Готово</button>
+    <button id="btn-settings" class="text-btn" hidden>Настройки</button>
+    <button id="btn-parent" class="hold-btn" aria-label="Родительский режим (удерживайте)">
+      <span class="hold-fill"></span>⚙
+    </button>
+  </footer>
+
+  <!-- Окно: создание и редактирование карточки -->
+  <dialog id="card-dialog">
+    <form method="dialog" class="dialog-body">
+      <h2 id="card-dialog-title">Новая карточка</h2>
+
+      <div class="preview" id="card-preview"></div>
+
+      <label class="field">
+        <span>Подпись</span>
+        <input id="card-label" type="text" maxlength="40" required placeholder="Например: сок">
+      </label>
+
+      <div class="row">
+        <label class="btn">
+          📷 Фото
+          <input id="card-photo" type="file" accept="image/*" capture="environment" hidden>
+        </label>
+        <label class="btn">
+          🖼 Из галереи
+          <input id="card-gallery" type="file" accept="image/*" hidden>
+        </label>
+        <label class="field small">
+          <span>или эмодзи</span>
+          <input id="card-emoji" type="text" maxlength="4" placeholder="🍎">
+        </label>
+      </div>
+
+      <div class="row">
+        <button type="button" id="btn-record" class="btn">🎙 Записать голос</button>
+        <button type="button" id="btn-play" class="btn" disabled>▶ Прослушать</button>
+        <button type="button" id="btn-remove-audio" class="btn" disabled>Удалить запись</button>
+      </div>
+      <p class="hint" id="record-hint">Без записи слово произнесёт синтезатор речи.</p>
+
+      <div class="row end">
+        <button type="button" id="btn-delete-card" class="btn danger">Удалить карточку</button>
+        <span class="spacer"></span>
+        <button type="button" id="btn-cancel-card" class="btn">Отмена</button>
+        <button type="button" id="btn-save-card" class="btn primary">Сохранить</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Окно: настройки -->
+  <dialog id="settings-dialog">
+    <form method="dialog" class="dialog-body">
+      <h2>Настройки</h2>
+
+      <label class="check">
+        <input type="checkbox" id="set-sound"> Звук включён
+      </label>
+      <label class="field">
+        <span>Громкость</span>
+        <input type="range" id="set-volume" min="0.1" max="1" step="0.1">
+      </label>
+      <label class="check">
+        <input type="checkbox" id="set-speak-on-tap"> Озвучивать карточку при нажатии
+      </label>
+      <label class="field">
+        <span>Карточек в ряду</span>
+        <select id="set-columns">
+          <option>2</option><option>3</option><option>4</option>
+          <option>5</option><option>6</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>PIN для родительского режима (пусто — без PIN)</span>
+        <input type="password" id="set-pin" inputmode="numeric" maxlength="8" autocomplete="off">
+      </label>
+
+      <h3>Резервная копия</h3>
+      <div class="row">
+        <button type="button" id="btn-export" class="btn">Сохранить в файл</button>
+        <label class="btn">
+          Загрузить из файла
+          <input type="file" id="input-import" accept=".json,application/json" hidden>
+        </label>
+      </div>
+      <p class="hint">Файл содержит все карточки с фото и голосом. Его можно перенести на другое устройство.</p>
+
+      <div class="row end">
+        <button type="button" id="btn-reset" class="btn danger">Вернуть стартовый набор</button>
+        <span class="spacer"></span>
+        <button type="button" id="btn-close-settings" class="btn primary">Готово</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Окно: ввод PIN -->
+  <dialog id="pin-dialog">
+    <form method="dialog" class="dialog-body narrow">
+      <h2>Введите PIN</h2>
+      <input type="password" id="pin-input" inputmode="numeric" maxlength="8" autocomplete="off">
+      <p class="hint error" id="pin-error" hidden>Неверный PIN</p>
+      <div class="row end">
+        <button type="button" id="btn-pin-cancel" class="btn">Отмена</button>
+        <button type="submit" id="btn-pin-ok" class="btn primary">OK</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

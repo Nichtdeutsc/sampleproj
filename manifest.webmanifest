@@ -1,0 +1,20 @@
+{
+  "name": "Карточки — коммуникатор PECS",
+  "short_name": "Карточки",
+  "description": "Бесплатный коммуникатор с карточками для детей с аутизмом и нарушениями речи",
+  "lang": "ru",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f1ea",
+  "theme_color": "#f4f1ea",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,273 @@
+/* Спокойная палитра: без ярких цветов и вспышек,
+   чтобы не перегружать ребёнка с сенсорной чувствительностью */
+:root {
+  --bg: #f4f1ea;
+  --card: #ffffff;
+  --text: #2b2b2b;
+  --muted: #6b6b6b;
+  --accent: #4f7a6a;
+  --accent-soft: #dfe9e4;
+  --danger: #a44a3f;
+  --border: #d9d4c7;
+  --radius: 16px;
+  --columns: 4;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Отключаем выделение текста и меню долгого нажатия:
+     ребёнок часто держит палец на экране */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+           env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+button { font: inherit; color: inherit; }
+
+/* ---------- Полоса фразы ---------- */
+
+.strip-bar {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  background: var(--accent-soft);
+  border-bottom: 2px solid var(--border);
+}
+
+.strip {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+  min-height: 96px;
+  padding: 6px;
+  overflow-x: auto;
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 2px dashed var(--border);
+}
+
+.strip .card {
+  flex: 0 0 84px;
+  height: 84px;
+  padding: 4px;
+}
+.strip .card .emoji { font-size: 2.2rem; }
+.strip .card .label { margin-top: 2px; font-size: 0.8rem; }
+
+.strip-btn {
+  width: 72px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 2rem;
+  cursor: pointer;
+}
+.strip-btn.say { background: var(--accent); color: #fff; }
+.strip-btn.clear { background: var(--card); border: 2px solid var(--border); }
+
+/* ---------- Сетка карточек ---------- */
+
+.board {
+  flex: 1;
+  display: grid;
+  /* Число колонок задаётся в настройках, а не подстраивается под экран.
+     Так карточки всегда остаются на своих местах */
+  grid-template-columns: repeat(var(--columns), 1fr);
+  /* Высота ряда = высоте квадратной карточки, ряды не сжимаются */
+  grid-auto-rows: max-content;
+  gap: 12px;
+  padding: 12px;
+  overflow-y: auto;
+  align-content: start;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  padding: 6px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.card img {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.card .emoji {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  font-size: clamp(2rem, 8vw, 4.5rem);
+  line-height: 1;
+}
+
+.card .label {
+  margin-top: 4px;
+  font-size: clamp(0.85rem, 2.4vw, 1.25rem);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Мягкая обратная связь при нажатии — без анимации */
+.card:active { background: var(--accent-soft); }
+
+/* ---------- Родительский режим ---------- */
+
+body.parent .board .card { border-style: dashed; }
+
+.card .tools {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  gap: 4px;
+}
+.card .tools button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fffd;
+  cursor: pointer;
+}
+
+.card.add {
+  border-style: dashed;
+  color: var(--accent);
+  font-size: 3rem;
+}
+
+.card .badge {
+  position: absolute;
+  bottom: 4px;
+  left: 6px;
+  font-size: 0.8rem;
+}
+
+/* ---------- Нижняя панель ---------- */
+
+.bottom-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+}
+
+.mode-label { flex: 1; color: var(--muted); font-size: 0.9rem; }
+
+.text-btn {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  cursor: pointer;
+}
+
+.hold-btn {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.4rem;
+  overflow: hidden;
+  cursor: pointer;
+}
+.hold-fill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 0;
+  background: var(--accent-soft);
+  z-index: -1;
+}
+.hold-btn.holding .hold-fill {
+  height: 100%;
+  transition: height 2s linear;
+}
+
+/* ---------- Диалоги ---------- */
+
+dialog {
+  border: none;
+  border-radius: var(--radius);
+  padding: 0;
+  width: min(560px, 94vw);
+  max-height: 92vh;
+  -webkit-user-select: text;
+  user-select: text;
+}
+dialog::backdrop { background: #0006; }
+
+.dialog-body { display: flex; flex-direction: column; gap: 12px; padding: 20px; }
+.dialog-body.narrow { width: 280px; }
+.dialog-body h2, .dialog-body h3 { margin: 0; }
+
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field.small { width: 110px; }
+.field span { font-size: 0.85rem; color: var(--muted); }
+.field input, .field select, #pin-input {
+  padding: 10px;
+  font-size: 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.check { display: flex; align-items: center; gap: 8px; }
+
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+.row.end { align-items: center; }
+.spacer { flex: 1; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  cursor: pointer;
+}
+.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn.danger { color: var(--danger); border-color: var(--danger); }
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn.recording { background: var(--danger); color: #fff; }
+
+.preview {
+  width: 140px;
+  height: 140px;
+  align-self: center;
+}
+.preview .card { width: 100%; height: 100%; cursor: default; }
+
+.hint { margin: 0; font-size: 0.85rem; color: var(--muted); }
+.hint.error { color: var(--danger); }
+
+[hidden] { display: none !important; }
